@@ -1,5 +1,8 @@
 paper: paper-clean paper-build
 
+build:
+	@go build -o bin/ .
+
 paper-build:
 	@mkdir -p build
 	@latexmk -pdf -bibtex -outdir=../build -cd docs/paper.tex
