@@ -5,14 +5,20 @@ import (
 	"github.com/bayusamudra5502/multiparticipant-encryptor/lib/cipher"
 )
 
-func Decrypt(
-	inputPath string,
+func ReplaceText(
+	ciphertextPath string,
+	newPlaintextPath string,
 	outputPath string,
 	privateKey string,
 	password []byte,
 	ownerPublicKeyPath string,
 ) error {
-	ciphertext, err := lib.ReadBytesFromFile(inputPath)
+	ciphertext, err := lib.ReadBytesFromFile(ciphertextPath)
+	if err != nil {
+		return err
+	}
+
+	plaintext, err := lib.ReadBytesFromFile(newPlaintextPath)
 	if err != nil {
 		return err
 	}
@@ -28,11 +34,11 @@ func Decrypt(
 	}
 
 	c := cipher.NewEncryptor(nil, encPrivateKey)
-	res, err := c.Decrypt(ciphertext, ownerPublicKey)
+	result, err := c.Replace(ciphertext, plaintext, ownerPublicKey)
 
 	if err != nil {
 		return err
 	}
 
-	return lib.WriteBytesToFile(outputPath, res)
+	return lib.WriteBytesToFile(outputPath, result)
 }

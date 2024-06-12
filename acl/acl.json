@@ -1,0 +1,19 @@
+{
+  "acl": [
+    {
+      "path": "./secrets/adam/public.key",
+      "read_acl": true,
+      "replace_acl": true
+    },
+    {
+      "path": "./secrets/bob/public.key",
+      "read_acl": true,
+      "replace_acl": false
+    },
+    {
+      "path": "./secrets/cloe/public.key",
+      "read_acl": false,
+      "replace_acl": true
+    }
+  ]
+}

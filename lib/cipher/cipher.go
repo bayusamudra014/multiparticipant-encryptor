@@ -21,43 +21,20 @@ func NewEncryptor(
 	decryptionKey *ecdh.PrivateKey,
 ) *MultipartiCipher {
 	return &MultipartiCipher{
-		readParticipants: []*Participant{
-			NewParticipant(decryptionKey.PublicKey()),
-		},
-		writeParticipants: []*Participant{
-			NewParticipant(decryptionKey.PublicKey()),
-		},
-		signingKey:    signingKey,
-		decryptionKey: decryptionKey,
+		readParticipants:  []*Participant{},
+		writeParticipants: []*Participant{},
+		signingKey:        signingKey,
+		decryptionKey:     decryptionKey,
 	}
 }
 
 func (e *MultipartiCipher) SetReadParticipant(participant []*Participant) *MultipartiCipher {
-	userParticipant := NewParticipant(e.decryptionKey.PublicKey())
-	newParticipants := []*Participant{userParticipant}
-
-	for _, p := range participant {
-		if !p.Equals(userParticipant) {
-			newParticipants = append(newParticipants, p)
-		}
-	}
-
-	e.readParticipants = newParticipants
+	e.readParticipants = participant
 	return e
 }
 
 func (e *MultipartiCipher) SetWriteParticipant(participant []*Participant) *MultipartiCipher {
-	userParticipant := NewParticipant(e.decryptionKey.PublicKey())
-	newParticipants := []*Participant{userParticipant}
-
-	for _, p := range participant {
-		if !p.Equals(userParticipant) {
-			newParticipants = append(newParticipants, p)
-		}
-	}
-
-	e.writeParticipants = newParticipants
-
+	e.writeParticipants = participant
 	return e
 }
 

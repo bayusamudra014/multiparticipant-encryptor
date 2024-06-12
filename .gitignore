@@ -1,2 +1,5 @@
 build/
 paper.pdf
+secrets/
+sample/
+encrypted/

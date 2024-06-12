@@ -30,16 +30,18 @@ func generateParticipant(n int) ([]*cipher.Participant, []*ecdh.PrivateKey, erro
 }
 
 func TestCipherByOwner(t *testing.T) {
-	ownerPrivateEncrypt, _, err := crypto.GenerateECIESPair()
+	ownerPrivateEncrypt, ownerPublicEncrypt, err := crypto.GenerateECIESPair()
 	assert.Nil(t, err)
 
 	ownerPrivateSign, ownerPublicSign, err := crypto.GenerateSigningPair()
 	assert.Nil(t, err)
 
 	readPublic, _, err := generateParticipant(5)
+	readPublic = append(readPublic, (cipher.NewParticipant(ownerPublicEncrypt)))
 	assert.Nil(t, err)
 
 	writePublic, _, err := generateParticipant(5)
+	writePublic = append(writePublic, (cipher.NewParticipant(ownerPublicEncrypt)))
 	assert.Nil(t, err)
 
 	message := make([]byte, 1024*1024)
@@ -90,7 +92,7 @@ func TestCipherByPair(t *testing.T) {
 }
 
 func TestCipherReplace(t *testing.T) {
-	ownerPrivateEncrypt, _, err := crypto.GenerateECIESPair()
+	ownerPrivateEncrypt, ownerPublicEncrypt, err := crypto.GenerateECIESPair()
 	assert.Nil(t, err)
 
 	ownerPrivateSign, ownerPublicSign, err := crypto.GenerateSigningPair()
@@ -104,6 +106,11 @@ func TestCipherReplace(t *testing.T) {
 
 	writePublic = append([]*cipher.Participant{readPublic[0]}, writePublic...)
 	writePrivate = append([]*ecdh.PrivateKey{readPrivate[0]}, writePrivate...)
+
+	writePublic = append(writePublic, cipher.NewParticipant(ownerPublicEncrypt))
+	readPublic = append(readPublic, cipher.NewParticipant(ownerPublicEncrypt))
+
+	writePrivate = append(writePrivate, ownerPrivateEncrypt)
 
 	message := make([]byte, 1024*1024)
 	rand.Read(message)
@@ -155,16 +162,18 @@ func TestCipherReplace(t *testing.T) {
 }
 
 func TestBodyForged(t *testing.T) {
-	ownerPrivateEncrypt, _, err := crypto.GenerateECIESPair()
+	ownerPrivateEncrypt, ownerPublicEncrypt, err := crypto.GenerateECIESPair()
 	assert.Nil(t, err)
 
 	ownerPrivateSign, ownerPublicSign, err := crypto.GenerateSigningPair()
 	assert.Nil(t, err)
 
 	readPublic, readPrivate, err := generateParticipant(1)
+	readPublic = append(readPublic, cipher.NewParticipant(ownerPublicEncrypt))
 	assert.Nil(t, err)
 
 	writePublic, _, err := generateParticipant(1)
+	writePublic = append(writePublic, cipher.NewParticipant(ownerPublicEncrypt))
 	assert.Nil(t, err)
 
 	message := make([]byte, 1024*1024)
@@ -210,16 +219,18 @@ func TestBodyForged(t *testing.T) {
 }
 
 func TestHeaderForged(t *testing.T) {
-	ownerPrivateEncrypt, _, err := crypto.GenerateECIESPair()
+	ownerPrivateEncrypt, ownerPublicEncrypt, err := crypto.GenerateECIESPair()
 	assert.Nil(t, err)
 
 	ownerPrivateSign, ownerPublicSign, err := crypto.GenerateSigningPair()
 	assert.Nil(t, err)
 
 	readPublic, readPrivate, err := generateParticipant(1)
+	readPublic = append(readPublic, cipher.NewParticipant(ownerPublicEncrypt))
 	assert.Nil(t, err)
 
 	writePublic, _, err := generateParticipant(1)
+	writePublic = append(writePublic, cipher.NewParticipant(ownerPublicEncrypt))
 	assert.Nil(t, err)
 
 	message := make([]byte, 1024*1024)
