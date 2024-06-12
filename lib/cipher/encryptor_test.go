@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"testing"
 
+	"github.com/bayusamudra5502/multiparticipant-encryptor/lib"
 	"github.com/bayusamudra5502/multiparticipant-encryptor/lib/cipher"
 	"github.com/bayusamudra5502/multiparticipant-encryptor/lib/crypto"
 	"github.com/stretchr/testify/assert"
@@ -151,4 +152,153 @@ func TestCipherReplace(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Nil(t, newDecryptedMessage)
 
+}
+
+func TestBodyForged(t *testing.T) {
+	ownerPrivateEncrypt, _, err := crypto.GenerateECIESPair()
+	assert.Nil(t, err)
+
+	ownerPrivateSign, ownerPublicSign, err := crypto.GenerateSigningPair()
+	assert.Nil(t, err)
+
+	readPublic, readPrivate, err := generateParticipant(1)
+	assert.Nil(t, err)
+
+	writePublic, _, err := generateParticipant(1)
+	assert.Nil(t, err)
+
+	message := make([]byte, 1024*1024)
+	rand.Read(message)
+
+	c1 := cipher.
+		NewEncryptor(ownerPrivateSign, ownerPrivateEncrypt).
+		SetReadParticipant(readPublic).
+		SetWriteParticipant(writePublic)
+
+	encrypted, err := c1.Encrypt(message)
+	assert.Nil(t, err)
+
+	attackerPrivate, _, err := crypto.GenerateSigningPair()
+	assert.Nil(t, err)
+
+	sepearated := lib.SplitBytes(encrypted)
+	readTable := sepearated[0]
+	writeTable := sepearated[1]
+	encodedPublic := sepearated[2]
+	ownerSignature := sepearated[3]
+
+	encryptionKey, err := cipher.GetReadKey(readTable, ownerPrivateEncrypt)
+	assert.Nil(t, err)
+
+	newEncrypted, err := crypto.EncryptAES(encryptionKey, message, ownerSignature)
+	assert.Nil(t, err)
+
+	mergedBody := lib.MergeBytes(readTable, writeTable, encodedPublic, ownerSignature, newEncrypted)
+	fileSignature, err := crypto.SignBytes(attackerPrivate, mergedBody)
+	assert.Nil(t, err)
+
+	newCiphertext := lib.MergeBytes(readTable, writeTable, encodedPublic, ownerSignature, newEncrypted, fileSignature)
+
+	// Read by owner
+	_, err = c1.Decrypt(newCiphertext, ownerPublicSign)
+	assert.NotNil(t, err)
+
+	// Read by reader
+	c2 := cipher.NewEncryptor(nil, readPrivate[0])
+	_, err = c2.Decrypt(newCiphertext, ownerPublicSign)
+	assert.NotNil(t, err)
+}
+
+func TestHeaderForged(t *testing.T) {
+	ownerPrivateEncrypt, _, err := crypto.GenerateECIESPair()
+	assert.Nil(t, err)
+
+	ownerPrivateSign, ownerPublicSign, err := crypto.GenerateSigningPair()
+	assert.Nil(t, err)
+
+	readPublic, readPrivate, err := generateParticipant(1)
+	assert.Nil(t, err)
+
+	writePublic, _, err := generateParticipant(1)
+	assert.Nil(t, err)
+
+	message := make([]byte, 1024*1024)
+	rand.Read(message)
+
+	c1 := cipher.
+		NewEncryptor(ownerPrivateSign, ownerPrivateEncrypt).
+		SetReadParticipant(readPublic).
+		SetWriteParticipant(writePublic)
+
+	encrypted, err := c1.Encrypt(message)
+	assert.Nil(t, err)
+
+	attackerPrivate, attackerPublic, err := crypto.GenerateSigningPair()
+	assert.Nil(t, err)
+
+	sepearated := lib.SplitBytes(encrypted)
+	readTable := sepearated[0]
+	writeTable := sepearated[1]
+
+	encodedPublic, err := lib.EncodePublicSigningKey(attackerPublic)
+	assert.Nil(t, err)
+
+	ownerSignature := sepearated[3]
+
+	encryptionKey, err := cipher.GetReadKey(readTable, ownerPrivateEncrypt)
+	assert.Nil(t, err)
+
+	newEncrypted, err := crypto.EncryptAES(encryptionKey, message, ownerSignature)
+	assert.Nil(t, err)
+
+	mergedBody := lib.MergeBytes(readTable, writeTable, encodedPublic, ownerSignature, newEncrypted)
+	fileSignature, err := crypto.SignBytes(attackerPrivate, mergedBody)
+	assert.Nil(t, err)
+
+	newCiphertext := lib.MergeBytes(readTable, writeTable, encodedPublic, ownerSignature, newEncrypted, fileSignature)
+
+	// Read by owner
+	_, err = c1.Decrypt(newCiphertext, ownerPublicSign)
+	assert.NotNil(t, err)
+
+	// Read by reader
+	c2 := cipher.NewEncryptor(nil, readPrivate[0])
+	_, err = c2.Decrypt(newCiphertext, ownerPublicSign)
+	assert.NotNil(t, err)
+}
+
+func TestInvalidPublicKey(t *testing.T) {
+	ownerPrivateEncrypt, _, err := crypto.GenerateECIESPair()
+	assert.Nil(t, err)
+
+	ownerPrivateSign, _, err := crypto.GenerateSigningPair()
+	assert.Nil(t, err)
+
+	_, otherPublicSign, err := crypto.GenerateSigningPair()
+
+	readPublic, readPrivate, err := generateParticipant(1)
+	assert.Nil(t, err)
+
+	writePublic, _, err := generateParticipant(1)
+	assert.Nil(t, err)
+
+	message := make([]byte, 1024*1024)
+	rand.Read(message)
+
+	c1 := cipher.
+		NewEncryptor(ownerPrivateSign, ownerPrivateEncrypt).
+		SetReadParticipant(readPublic).
+		SetWriteParticipant(writePublic)
+
+	encrypted, err := c1.Encrypt(message)
+	assert.Nil(t, err)
+
+	// Read by owner
+	_, err = c1.Decrypt(encrypted, otherPublicSign)
+	assert.NotNil(t, err)
+
+	// Read by reader
+	c2 := cipher.NewEncryptor(nil, readPrivate[0])
+	_, err = c2.Decrypt(encrypted, otherPublicSign)
+	assert.NotNil(t, err)
 }
