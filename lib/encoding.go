@@ -6,6 +6,7 @@ import (
 	"crypto/subtle"
 	"crypto/x509"
 	"encoding/binary"
+	"errors"
 )
 
 func MergeBytes(slices ...[]byte) []byte {
@@ -135,7 +136,16 @@ func EncodePrivateSigningKey(key *ecdsa.PrivateKey) ([]byte, error) {
 
 func DecodePrivateSigningKey(data []byte) (*ecdsa.PrivateKey, error) {
 	res, err := x509.ParsePKCS8PrivateKey(data)
-	return res.(*ecdsa.PrivateKey), err
+	if err != nil {
+		return nil, err
+	}
+
+	convert, ok := res.(*ecdsa.PrivateKey)
+	if !ok {
+		return nil, errors.New("invalid key type")
+	}
+
+	return convert, nil
 }
 
 func EncodePublicSigningKey(key *ecdsa.PublicKey) ([]byte, error) {
@@ -144,5 +154,14 @@ func EncodePublicSigningKey(key *ecdsa.PublicKey) ([]byte, error) {
 
 func DecodePublicSigningKey(data []byte) (*ecdsa.PublicKey, error) {
 	res, err := x509.ParsePKIXPublicKey(data)
-	return res.(*ecdsa.PublicKey), err
+	if err != nil {
+		return nil, err
+	}
+
+	convert, ok := res.(*ecdsa.PublicKey)
+	if !ok {
+		return nil, errors.New("invalid key type")
+	}
+
+	return convert, nil
 }
