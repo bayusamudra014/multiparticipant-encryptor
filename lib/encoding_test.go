@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/bayusamudra5502/multiparticipant-encryptor/lib"
+	"github.com/bayusamudra5502/multiparticipant-encryptor/lib/crypto"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -101,4 +102,42 @@ func TestFindDataWithKeyNotFound(t *testing.T) {
 
 	result := lib.GetFromMapKey(key, encoded)
 	assert.Nil(t, result)
+}
+
+func TestEncodeDecodeKeyEncryption(t *testing.T) {
+	privateKey, publicKey, err := crypto.GenerateECIESPair()
+	assert.Nil(t, err)
+
+	encoded, err := lib.EncodePrivateEncryptionKey(privateKey)
+	assert.Nil(t, err)
+
+	decoded, err := lib.DecodePrivateEncryptionKey(encoded)
+	assert.Nil(t, err)
+	assert.True(t, privateKey.Equal(decoded))
+
+	encodedPublic, err := lib.EncodePublicEncryptionKey(publicKey)
+	assert.Nil(t, err)
+
+	decodedPublic, err := lib.DecodePublicEncryptionKey(encodedPublic)
+	assert.Nil(t, err)
+	assert.True(t, publicKey.Equal(decodedPublic))
+}
+
+func TestEncodeDecodeKeySigning(t *testing.T) {
+	privateKey, publicKey, err := crypto.GenerateSigningPair()
+	assert.Nil(t, err)
+
+	encoded, err := lib.EncodePrivateSigningKey(privateKey)
+	assert.Nil(t, err)
+
+	decoded, err := lib.DecodePrivateSigningKey(encoded)
+	assert.Nil(t, err)
+	assert.True(t, privateKey.Equal(decoded))
+
+	encodedPublic, err := lib.EncodePublicSigningKey(publicKey)
+	assert.Nil(t, err)
+
+	decodedPublic, err := lib.DecodePublicSigningKey(encodedPublic)
+	assert.Nil(t, err)
+	assert.True(t, publicKey.Equal(decodedPublic))
 }

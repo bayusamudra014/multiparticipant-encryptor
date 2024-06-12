@@ -28,12 +28,12 @@ func GenerateSharedKey(public *ecdh.PublicKey, private *ecdh.PrivateKey) ([]byte
 	return sharedKey, nil
 }
 
-func CalculatePublicHash(public *ecdh.PublicKey, nonce []byte) []byte {
+func CalculatePublicHash(public *ecdh.PublicKey, nonce []byte) [4]byte {
 	hash := sha256.New()
 	hash.Write(public.Bytes())
 	hash.Write(nonce)
 
-	return hash.Sum(nil)
+	return [4]byte(hash.Sum(nil))
 }
 
 func GenerateSigningPair() (*ecdsa.PrivateKey, *ecdsa.PublicKey, error) {
