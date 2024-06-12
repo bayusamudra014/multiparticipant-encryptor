@@ -3,12 +3,12 @@ package crypto_test
 import (
 	"testing"
 
-	lib "github.com/bayusamudra5502/multiparticipant-encryptor/lib/crypto"
+	"github.com/bayusamudra5502/multiparticipant-encryptor/lib/crypto"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGeneratePair(t *testing.T) {
-	private, public, err := lib.GenerateECIESPair()
+	private, public, err := crypto.GenerateECIESPair()
 
 	assert.Nil(t, err)
 	assert.NotNil(t, public)
@@ -16,24 +16,24 @@ func TestGeneratePair(t *testing.T) {
 }
 
 func TestGenerateSharedKey(t *testing.T) {
-	private, public, err := lib.GenerateECIESPair()
+	private, public, err := crypto.GenerateECIESPair()
 	assert.Nil(t, err)
 
-	sharedKey, err := lib.GenerateSharedKey(public, private)
+	sharedKey, err := crypto.GenerateSharedKey(public, private)
 	assert.Nil(t, err)
 	assert.NotNil(t, sharedKey)
 }
 
 func TestCalculatePublicHash(t *testing.T) {
-	_, public, err := lib.GenerateECIESPair()
+	_, public, err := crypto.GenerateECIESPair()
 	assert.Nil(t, err)
 
-	hash := lib.CalculatePublicHash(public, []byte("test"))
+	hash := crypto.CalculatePublicHash(public, []byte("test"))
 	assert.NotNil(t, hash)
 }
 
 func TestGenerateSigningPair(t *testing.T) {
-	private, public, err := lib.GenerateSigningPair()
+	private, public, err := crypto.GenerateSigningPair()
 
 	assert.Nil(t, err)
 	assert.NotNil(t, public)

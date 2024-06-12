@@ -4,7 +4,7 @@ import (
 	"crypto/rand"
 	"testing"
 
-	lib "github.com/bayusamudra5502/multiparticipant-encryptor/lib/crypto"
+	"github.com/bayusamudra5502/multiparticipant-encryptor/lib/crypto"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,12 +15,12 @@ func TestAES(t *testing.T) {
 	plaintext := []byte("Hello, World!")
 	additionalInfo := []byte("additional info")
 
-	ciphertext, err := lib.EncryptAES(key, plaintext, additionalInfo)
+	ciphertext, err := crypto.EncryptAES(key, plaintext, additionalInfo)
 	assert.Nil(t, err)
 	assert.NotEqual(t, plaintext, ciphertext)
 	assert.NotNil(t, plaintext, ciphertext)
 
-	decrypted, err := lib.DecryptAES(key, ciphertext, additionalInfo)
+	decrypted, err := crypto.DecryptAES(key, ciphertext, additionalInfo)
 	assert.Nil(t, err)
 	assert.Equal(t, plaintext, decrypted)
 }
@@ -32,12 +32,12 @@ func TestAESDifferentInfo(t *testing.T) {
 	plaintext := []byte("Hello, World!")
 	additionalInfo := []byte("additional info")
 
-	ciphertext, err := lib.EncryptAES(key, plaintext, additionalInfo)
+	ciphertext, err := crypto.EncryptAES(key, plaintext, additionalInfo)
 	assert.Nil(t, err)
 	assert.NotEqual(t, plaintext, ciphertext)
 	assert.NotNil(t, plaintext, ciphertext)
 
-	decrypted, err := lib.DecryptAES(key, ciphertext, []byte("different info"))
+	decrypted, err := crypto.DecryptAES(key, ciphertext, []byte("different info"))
 	assert.NotNil(t, err)
 	assert.Nil(t, decrypted)
 }
