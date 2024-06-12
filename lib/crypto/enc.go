@@ -5,8 +5,10 @@ import (
 	"crypto/cipher"
 	"crypto/ecdh"
 	"crypto/rand"
+	"crypto/sha256"
 
 	"github.com/bayusamudra5502/multiparticipant-encryptor/lib"
+	"golang.org/x/crypto/hkdf"
 )
 
 func EncryptAES(key []byte, plaintext []byte, additionalInfo []byte) ([]byte, error) {
@@ -75,8 +77,10 @@ func EncryptECIES(public *ecdh.PublicKey, plaintext []byte) ([]byte, error) {
 		return nil, err
 	}
 
+	aesKey := hkdf.Extract(sha256.New, sharedKey, private.PublicKey().Bytes())
+
 	publicRandom := private.PublicKey().Bytes()
-	encryptedData, err := EncryptAES(sharedKey, plaintext, publicRandom)
+	encryptedData, err := EncryptAES(aesKey, plaintext, publicRandom)
 
 	if err != nil {
 		return nil, err
@@ -102,7 +106,8 @@ func DecryptECIES(private *ecdh.PrivateKey, ciphertext []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	plaintext, err := DecryptAES(sharedKey, encryptedData, publicRandom)
+	aesKey := hkdf.Extract(sha256.New, sharedKey, publicKey.Bytes())
+	plaintext, err := DecryptAES(aesKey, encryptedData, publicRandom)
 
 	if err != nil {
 		return nil, err
