@@ -8,7 +8,7 @@ import (
 	"crypto/sha256"
 
 	"github.com/bayusamudra5502/multiparticipant-encryptor/lib"
-	"golang.org/x/crypto/hkdf"
+	"golang.org/x/crypto/pbkdf2"
 )
 
 func EncryptAES(key []byte, plaintext []byte, additionalInfo []byte) ([]byte, error) {
@@ -77,10 +77,14 @@ func EncryptECIES(public *ecdh.PublicKey, plaintext []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	aesKey := hkdf.Extract(sha256.New, sharedKey, private.PublicKey().Bytes())
+	nonce := make([]byte, 32)
+	rand.Read(nonce)
+
+	aesKey := pbkdf2.Key(sharedKey, nonce, 4096, 32, sha256.New)
 
 	publicRandom := private.PublicKey().Bytes()
 	encryptedData, err := EncryptAES(aesKey, plaintext, publicRandom)
+	encryptedData = append(nonce, encryptedData...)
 
 	if err != nil {
 		return nil, err
@@ -92,7 +96,8 @@ func EncryptECIES(public *ecdh.PublicKey, plaintext []byte) ([]byte, error) {
 func DecryptECIES(private *ecdh.PrivateKey, ciphertext []byte) ([]byte, error) {
 	splitedData := lib.SplitBytes(ciphertext)
 	publicRandom := splitedData[0]
-	encryptedData := splitedData[1]
+	encryptedData := splitedData[1][32:]
+	nonce := splitedData[1][:32]
 
 	publicKey, err := ecdh.P256().NewPublicKey(publicRandom)
 
@@ -106,7 +111,7 @@ func DecryptECIES(private *ecdh.PrivateKey, ciphertext []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	aesKey := hkdf.Extract(sha256.New, sharedKey, publicKey.Bytes())
+	aesKey := pbkdf2.Key(sharedKey, nonce, 4096, 32, sha256.New)
 	plaintext, err := DecryptAES(aesKey, encryptedData, publicRandom)
 
 	if err != nil {
