@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"errors"
+	"fmt"
 
 	"github.com/bayusamudra5502/multiparticipant-encryptor/lib"
 	"github.com/bayusamudra5502/multiparticipant-encryptor/lib/crypto"
@@ -15,15 +16,20 @@ import (
 func GenerateKeyPairFile(publicKeyPath string, privateKeyPath string, privatePassword []byte) error {
 	privateKey, publicKey, err := GenerateKeyPair((privatePassword))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to generate key pair: %w", err)
 	}
 
 	err = lib.WriteBytesToFile(privateKeyPath, privateKey)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write private key: %w", err)
 	}
 
-	return lib.WriteBytesToFile(publicKeyPath, publicKey)
+	err = lib.WriteBytesToFile(publicKeyPath, publicKey)
+	if err != nil {
+		return fmt.Errorf("failed to write public key: %w", err)
+	}
+
+	return nil
 }
 
 func ReadPrivateFile(privateKeyPath string, privatePassword []byte) (*ecdh.PrivateKey, *ecdsa.PrivateKey, error) {

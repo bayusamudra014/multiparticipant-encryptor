@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/bayusamudra5502/multiparticipant-encryptor/lib"
 	"github.com/bayusamudra5502/multiparticipant-encryptor/lib/cipher"
@@ -50,7 +51,7 @@ func EncryptFile(
 	for _, acl := range acls {
 		publicKey, _, err := ReadPublicFile(acl.PublicKeyPath)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to read public key: %w", err)
 		}
 
 		if acl.ReadAccess {
@@ -64,7 +65,7 @@ func EncryptFile(
 
 	_, signPrivate, err := ReadPrivateFile(privateKey, password)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to read private key: %w", err)
 	}
 
 	c := cipher.NewEncryptor(signPrivate, nil).
@@ -74,8 +75,14 @@ func EncryptFile(
 	res, err := c.Encrypt(plaintext)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to encrypt file: %w", err)
 	}
 
-	return lib.WriteBytesToFile(outputPath, res)
+	err = lib.WriteBytesToFile(outputPath, res)
+
+	if err != nil {
+		return fmt.Errorf("failed to write encrypted file: %w", err)
+	}
+
+	return nil
 }

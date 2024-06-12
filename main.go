@@ -87,6 +87,14 @@ func main() {
 			Help:     "Access control list file",
 		},
 	)
+	ciphertext := parser.String(
+		"c",
+		"ciphertext",
+		&argparse.Options{
+			Required: false,
+			Help:     "Input ciphertext file",
+		},
+	)
 
 	err := parser.Parse(os.Args)
 	if err != nil {
@@ -120,12 +128,33 @@ func main() {
 	}
 
 	if *decrypt {
-		decryptMenu()
+		if *ciphertext == "" && *output == "" && *private == "" && *public == "" {
+			fmt.Println("Error: ciphertext input, output, private key, and owner public key file paths are required")
+			return
+		}
+
+		decryptMenu(
+			*ciphertext,
+			*output,
+			*private,
+			*public,
+		)
 		return
 	}
 
 	if *replace {
-		replaceMenu()
+		if *ciphertext == "" && *input == "" && *output == "" && *private == "" && *public == "" {
+			fmt.Println("Error: Ciphertext, input, output, private key, and owner public key file paths are required")
+			return
+		}
+
+		replaceMenu(
+			*ciphertext,
+			*input,
+			*output,
+			*private,
+			*public,
+		)
 		return
 	}
 
@@ -187,15 +216,56 @@ func encryptMenu(
 	}
 
 	if err := cmd.EncryptFile(inputFile, outputFile, privateKey, password, acls); err != nil {
-		fmt.Printf("Error: encrypting file failed: %s\n", err)
+		fmt.Printf("Error: %s\n", err)
 		return
 	}
 
 	fmt.Println("File encrypted successfully:", outputFile)
 }
 
-func decryptMenu() {
+func decryptMenu(
+	inputFile string,
+	outputFile string,
+	privateKey string,
+	ownerPublicKey string,
+) {
+	fmt.Print("Enter password: ")
+	password, err := term.ReadPassword(0)
+	fmt.Println()
+
+	if err != nil {
+		fmt.Printf("Error: reading password failed: %s\n", err)
+		return
+	}
+
+	if err := cmd.Decrypt(inputFile, outputFile, privateKey, password, ownerPublicKey); err != nil {
+		fmt.Printf("Error: %s\n", err)
+		return
+	}
+
+	fmt.Println("File decrypted successfully:", outputFile)
 }
 
-func replaceMenu() {
+func replaceMenu(
+	inputCiphertext string,
+	inputPlaintext string,
+	outputFile string,
+	privateKey string,
+	ownerPublicKey string,
+) {
+	fmt.Print("Enter password: ")
+	password, err := term.ReadPassword(0)
+	fmt.Println()
+
+	if err != nil {
+		fmt.Printf("Error: reading password failed: %s\n", err)
+		return
+	}
+
+	if err := cmd.ReplaceText(inputCiphertext, inputPlaintext, outputFile, privateKey, password, ownerPublicKey); err != nil {
+		fmt.Printf("Error: replacing text failed: %s\n", err)
+		return
+	}
+
+	fmt.Println("Text replaced successfully:", outputFile)
 }
