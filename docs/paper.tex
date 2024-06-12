@@ -7,6 +7,9 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage{algorithm}
+
+
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
@@ -26,6 +29,8 @@
         }
         \let\@evenfoot\@empty
     }
+    \renewcommand{\ALG@name}{Algoritma}%
+    \renewcommand{\algorithmicrequire}{\textbf{Prasyarat:}}
 \makeatother
 
 
@@ -69,27 +74,27 @@ Pada makalah ini, akan dibahas mengenai penerapan \emph{hybrid cryptography} pad
 \section{Landasan Teori}
 
 \subsection{\emph{Elliptic Curve Cryptography}}
-Menurut \cite{b1}, Kriptografi kurva eliptik merupakan salah satu metode kriptografi yang menggunakan operasi pada kurva eliptik. Kurva eliptik merupakan kurva pada dimensi dua yang memenuhi persamaan \ref{eq1}. Syarat dari persamaan ini agar disebut sebagai kurva eliptik adalah $4a^3 + 27b^2 \neq 0$.
+Menurut \cite{munir2019}, Kriptografi kurva eliptik merupakan salah satu metode kriptografi yang menggunakan operasi pada kurva eliptik. Kurva eliptik merupakan kurva pada dimensi dua yang memenuhi persamaan \ref{eq1}. Syarat dari persamaan ini agar disebut sebagai kurva eliptik adalah $4a^3 + 27b^2 \neq 0$.
 
 \begin{equation}
     \label{eq1}
     y^2 = x^3 + ax + b
 \end{equation}
 
-Menurut \cite{b2}, Kekuatan Kriptografi dari ECC terletak pada permasalahan \emph{Elliptic Curve Discrete Logarithm Problem} (ECDLP). ECDLP merupakan permasalahan untuk mencari nilai $k$ pada persamaan $kP = Q$. Pada persamaan ini, $P$ merupakan titik pada kurva eliptik, sedangkan $Q$ merupakan hasil perkalian titik $P$ dengan skalar $k$. Bila dibandingkan dengan permasalahan \emph{Discrete Logarithm Problem} (DLP) pada kriptografi RSA, ECDLP memiliki kualitas yang lebih baik dalam hal efisiensi. Hal ini dikarenakan kunci yang digunakan lebih pendek dibandingkan dengan kunci yang digunakan pada RSA.
+Menurut \cite{ali2016}, Kekuatan Kriptografi dari ECC terletak pada permasalahan \emph{Elliptic Curve Discrete Logarithm Problem} (ECDLP). ECDLP merupakan permasalahan untuk mencari nilai $k$ pada persamaan $kP = Q$. Pada persamaan ini, $P$ merupakan titik pada kurva eliptik, sedangkan $Q$ merupakan hasil perkalian titik $P$ dengan skalar $k$. Bila dibandingkan dengan permasalahan \emph{Discrete Logarithm Problem} (DLP) pada kriptografi RSA, ECDLP memiliki kualitas yang lebih baik dalam hal efisiensi. Hal ini dikarenakan kunci yang digunakan lebih pendek dibandingkan dengan kunci yang digunakan pada RSA.
 
 \subsection{Eliptic Curve Integrated Encryption Scheme (ECIES)}
 \label{sec:ecies}
 
-Elliptic Curve Integrated Encryption Scheme (ECIES) merupakan salah satu skema enkripsi hibrida. Skema ini diusulkan oleh Abdala, Bellare, dan Rogaway pada tahun 2021. Menurut \cite{b3}, ECIES merupakan pengembangan dari metode pertukaran kunci berbasis Diffie-Hellman. Pada ECIES, pesan akan dienkripsi menggunakan algoritma kunci simetris. Kunci simetris tersebut kemudian dienkripsi menggunakan algoritma kunci asimetris. Pada ECIES, kunci simetris yang digunakan akan dihasilkan dari pertukaran kunci Diffie-Hellman yang dilakukan proses pembangkitan kunci (KDF). 
+Elliptic Curve Integrated Encryption Scheme (ECIES) merupakan salah satu skema enkripsi hibrida. Skema ini diusulkan oleh Abdala, Bellare, dan Rogaway pada tahun 2021. Menurut \cite{abdalla2021}, ECIES merupakan pengembangan dari metode pertukaran kunci berbasis Diffie-Hellman. Pada ECIES, pesan akan dienkripsi menggunakan algoritma kunci simetris. Kunci simetris tersebut kemudian dienkripsi menggunakan algoritma kunci asimetris. Pada ECIES, kunci simetris yang digunakan akan dihasilkan dari pertukaran kunci Diffie-Hellman yang dilakukan proses pembangkitan kunci (KDF). 
 
 \begin{figure}[htbp]
     \centerline{\includegraphics[width=0.5\textwidth]{res/ecies.png}}
-    \caption{Ilustrasi proses enkripsi menggunakan ECIES (Sumber: \cite{b7})}
+    \caption{Ilustrasi proses enkripsi menggunakan ECIES (Sumber: \cite{martinez2010})}
     \label{fig:ecies}
 \end{figure}
 
-Pada skema ini, hal yang dilakukan adalah pembangkitan kunci. Ilustrasi dari proses enrkipsi memanfaatkan sistem ini ditunjukan pada Figur \ref{fig:ecies}. Untuk menjelaskan tata cara enkripsi, asumsikan terdapat dua buah pihak yang melakukan komunikasi, yaitu Alice dan Bob. Alice akan mengirimkan pesan $m$ kepada Bob. Proses pembangkitan kunci dilakukan dengan cara sebagai berikut \cite{b2}:
+Pada skema ini, hal yang dilakukan adalah pembangkitan kunci. Ilustrasi dari proses enrkipsi memanfaatkan sistem ini ditunjukan pada Figur \ref{fig:ecies}. Untuk menjelaskan tata cara enkripsi, asumsikan terdapat dua buah pihak yang melakukan komunikasi, yaitu Alice dan Bob. Alice akan mengirimkan pesan $m$ kepada Bob. Proses pembangkitan kunci dilakukan dengan cara sebagai berikut \cite{ali2016}:
 
 \begin{enumerate}
     \item Alice dan Bob akan menyepakati parameter kurva eliptik yang digunakan. Parameter yang diperlukan adalah $a$, $b$, $p$, dan $G$. Parameter $G$ adalah titik pada kurva eliptik yang digunakan sebagai titik pembangkit (\emph{generator point}).
@@ -125,7 +130,7 @@ Dengan metode seperti itu, pesan $m$ yang dikirimkan oleh Alice dapat dibaca ole
 
 \subsection{Tanda Tangan Digital \emph{Elliptic Curve Digital Signature Algorithm} (ECDSA)}
 
-Menurut \cite{b1}, Algoritma ECDSA merupakan algoritma tanda tangan digital yang dikembangkan dari algoritma tanda tangan ElGammal. Algoritma ini dikembangkan oleh Abdala, Bellare, dan Rogaway pada tahun 1999. Asumsikan terdapat dua buah partisipan, yakni Alice dan Bob yang akan melakukan komunikasi. Alice akan mengirimkan pesan $m$ kepada Bob. Alice ingin membuat penjagaan integritas pada pesan $m$ memanfaatkan ECDSA. Proses pembangkitan kunci dilakukan dengan cara sebagai berikut\cite{b2}:
+Menurut \cite{munir2019}, Algoritma ECDSA merupakan algoritma tanda tangan digital yang dikembangkan dari algoritma tanda tangan ElGammal. Algoritma ini dikembangkan oleh Abdala, Bellare, dan Rogaway pada tahun 1999. Asumsikan terdapat dua buah partisipan, yakni Alice dan Bob yang akan melakukan komunikasi. Alice akan mengirimkan pesan $m$ kepada Bob. Alice ingin membuat penjagaan integritas pada pesan $m$ memanfaatkan ECDSA. Proses pembangkitan kunci dilakukan dengan cara sebagai berikut\cite{ali2016}:
 
 \begin{enumerate}
     \item Alice dan Bob akan menyepakati parameter kurva eliptik yang digunakan. Parameter yang diperlukan adalah $a$, $b$, $p$, dan $G$. Parameter $G$ adalah titik pada kurva eliptik yang digunakan sebagai titik pembangkit (\emph{generator point}).
@@ -139,7 +144,7 @@ Menurut \cite{b1}, Algoritma ECDSA merupakan algoritma tanda tangan digital yang
 
 \begin{figure}[htbp]
     \centerline{\includegraphics[width=0.5\textwidth]{res/aead.example.png}}
-    \caption{Contoh penerapan AEAD pada mode blok GCM. Referensi \cite{b6}}
+    \caption{Contoh penerapan AEAD pada mode blok GCM. Referensi \cite{mcgrew2005}}
     \label{fig:aead.example}
 \end{figure}
 
@@ -171,17 +176,17 @@ Dengan metode seperti itu, Bob dapat memastikan bahwa pesan yang diterima dari A
 \subsection{\emph{Authenticated Encryption with Associated Data} (AEAD)}
 \label{sec:aead}
 
-Menurut \cite{b4}, AEAD merupakan pengembangan sistem otentikasi pesan terenkripsi yang dilakukan dengan cara yang lebih efisien. Pada AEAD, proses enkripsi serta otentikasi pesan dilakukan dalam satu proses saja. Metode ini merupakan metode yang berbeda bila dibandingkan dengan metode pada umumnya. Sebelum AEAD muncul, proses enkripsi pesan dilakukan dengan melakukan enkripsi pesan terlebih dahulu. Setelah itu, pesan akan diperiksa integritasnya dengan melakukan proses otentikasi. Pada AEAD, proses otentikasi dilakukan pada saat proses enkripsi berlangsung. Salah satu contoh dari enkripsi berbasis AEAD adalah AES dengan mode blok GCM.
+Menurut \cite{rogaway2002}, AEAD merupakan pengembangan sistem otentikasi pesan terenkripsi yang dilakukan dengan cara yang lebih efisien. Pada AEAD, proses enkripsi serta otentikasi pesan dilakukan dalam satu proses saja. Metode ini merupakan metode yang berbeda bila dibandingkan dengan metode pada umumnya. Sebelum AEAD muncul, proses enkripsi pesan dilakukan dengan melakukan enkripsi pesan terlebih dahulu. Setelah itu, pesan akan diperiksa integritasnya dengan melakukan proses otentikasi. Pada AEAD, proses otentikasi dilakukan pada saat proses enkripsi berlangsung. Salah satu contoh dari enkripsi berbasis AEAD adalah AES dengan mode blok GCM.
 
 Cipher yang menerapkan sistem enkripsi dalam kelas AEAD dapat memiliki \emph{associate data} (AD). Secara desain, data ini tidak dienkripsi, tetapi data ini akan diikutsertakan dalam proses otentikasi yang dihitung bersamaan dengan data yang dienkripsi. Fitur yang ditawarkan pada AEAD ini dapat digunakan untuk menjaga integritas data, seperti untuk menjaga integritas dari \emph{header} pesan. Contoh penerapan AEAD adalah menggunakan blok GCM seperti yang ditunjukan pada figur \ref{fig:aead.example}.
 
 
-GCM merupakan mode operasi dari enkripsi simetris berbasis blok yang termasuk dalam kelas AEAD. Menurut \cite{b6}, mode ini dapat diimplementasikan sangat baik pada level \emph{hardware} sehingga menghasilkan kecepatan enkripsi yang cepat. Ilustrasi dari proses enkripsi berbasis GCM ditunjukan pada figur \ref{fig1}. Menurut \cite{b6}, terdapat empat input yang dapat terlibat dalam operasi blok GCM. Input tersebut adalah sebagai berikut:
+GCM merupakan mode operasi dari enkripsi simetris berbasis blok yang termasuk dalam kelas AEAD. Menurut \cite{mcgrew2005}, mode ini dapat diimplementasikan sangat baik pada level \emph{hardware} sehingga menghasilkan kecepatan enkripsi yang cepat. Ilustrasi dari proses enkripsi berbasis GCM ditunjukan pada figur \ref{fig1}. Menurut \cite{mcgrew2005}, terdapat empat input yang dapat terlibat dalam operasi blok GCM. Input tersebut adalah sebagai berikut:
 
 \begin{figure}[htbp]
     \centerline{\includegraphics[width=0.5\textwidth]{res/fig1.png}}
 
-    \caption{Ilustrasi proses enkripsi berbasis GCM (Sumber \cite{b6})}
+    \caption{Ilustrasi proses enkripsi berbasis GCM (Sumber \cite{mcgrew2005})}
     \label{fig1}
 \end{figure}
 
@@ -201,17 +206,142 @@ Output dari mode blok ini adalah sebagai berikut:
 
 Metode enkripsi yang dilakukan pada mode GCM pada dasarnya mengikuti proses enkripsi pada mode \emph{counter} (CTR). Proses Enkripsi dilakukan dengan menghitung \emph{counter} untuk blok yang akan dienkripsi. Nilai counter akan dilakukan \emph{increment} dari nilai sebelumnya. Nilai \emph{counter} akan dilakukan proses enkripsi. Hasil enkripsi ini akan dilakukan operasi XOR dengan blok pesan sehingga mendapatkan \emph{ciphertext}. Hasil dari \emph{ciphertext} ini akan diikutsertakan dalam proses otentikasi. Data yang diikutsertakan dalam proses otentikasi adalah \emph{additional data} dan \emph{ciphertext}. Hasil dari otentikasi ini disebut dengan \emph{authentication tag}.
 
-\section{Integrasi Algoritma Enkripsi ECIES dengan Mode Blok GCM}
+\subsection{PBKDF2}
+Menurut \cite{pkcs5}, PBKDF2 merupakan sebuah fungsi random yang digunakan untuk membangkitkan kunci. Fungsi ini dapat menghasilkan derivasi kunci dengan ukuran yang tidak terbatas. Fungsi ini memerlukan beberapa parameter, seperti \emph{password} ($P$), \emph{salt} ($S$), \emph{iteration} $c$, dan \emph{key length} $dkLen$. Secara matematis, fungsi ini dapat dituliskan dengan persamaan \ref{eq:pbkdf}.
 
-Berdasarkan bagian \ref{sec:aead}, mode blok berbasis GCM mendukung penggunaan \emph{additional data} (AAD) dalam proses enkripsi. Pada bagian \ref{sec:ecies}, algoritma enkripsi ECIES memerlukan sebuah \emph{authentication tag} untuk memastikan integritas pesan yang dikirimkan. Perhitungan nilai ini pada dasarrnya dapat dilibatkan dengan menambahkan \emph{additional data} pada proses enkripsi menggunakan mode blok GCM. 
+\begin{equation}
+    \label{eq:pbkdf}
+    \text{DK} = \text{PBKDF2}_{\text{PRF}}(P, S, c, dkLen) 
+\end{equation}
+
+Pada persamaan \ref{eq:pbkdf}, $\text{DK}$ merupakan hasil dari fungsi PBKDF2. $\text{PRF}$ merupakan fungsi hash yang digunakan, seperti \emph{keyed HMAC} ataupun fungsi hash. Menurut \cite{raeburn2005}, PBKDF2 dapat digunakan untuk memperlambat proses \emph{brute-force} yang dilakukan pada saat melakukan proses dekripsi. 
+
+\section{Rancangan Sistem}
+\subsection{Integrasi Algoritma Enkripsi ECIES dengan Mode Blok GCM}
+
+Berdasarkan bagian \ref{sec:aead}, mode blok berbasis GCM mendukung penggunaan \emph{additional data} (AAD) dalam proses enkripsi. Pada bagian \ref{sec:ecies}, algoritma enkripsi ECIES memerlukan sebuah \emph{authentication tag} untuk memastikan integritas pesan yang dikirimkan. Perhitungan nilai ini pada dasarrnya dapat dilibatkan dengan menambahkan \emph{additional data} pada proses enkripsi menggunakan mode blok GCM. Ilustrasi dari usulan integrasi ini ditunjukan pada figur \ref{fig:integrasi}.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.5\textwidth]{res/ecies-aead.png}}
+    \caption{Ilustrasi Integrasi ECIES dengan Mode Blok GCM}
+    \label{fig:integrasi}
+\end{figure}
+
+Pada ilustrasi tersebut, terdapat beberapa usulan perubahan. Usulan pertama terkait dengan penggunaan PBKDF2 untuk membentuk kunci enkripsi setelah proses pembangkitan kunci. Penggunaan PBKDF2 ini bertujuan untuk memperlambat dari serangan \emph{brute-force} saat dilakukan dekripsi. Hal ini dapat menambah kualitas dari \emph{confidentiality} dari pesan tersebut. Konsekuensi penggunaan PBKDF2 ini, parameter pertama dari fungsi KDF pada ECIES menjadi wajib untuk diisi.
+
+Usulan kedua terkait dengan penggunaan \emph{additional data} pada proses enkripsi sebagai parameter kedua. Keuntungan menggunakan metode ini adalah proses otentikasi dari parameter opsional ini dapat dilakukan secara bersamaan dengan proses dekripsi dari pesan. Hal ini dapat mengefisiensikan proses otentikasi pesan pada parameter kedua tersebut.
+
+\subsection{Pengaturan Hak Akses pada Berkas Terenkripsi}
+\label{sec:hak-akses}
+
+Operasi yang dapat dilakukan pada sebuah berkas diantaranya adalah operasi untuk melakukan pembacaan berkas ataupun pengubahan dari berkas tersebut. Penerapan kedua operasi ini pada berkas terenkripsi dapat dilakukan dengan memanfaatkan algoritma kunci publik dan juga algoritma kunci simetris. Algoritma kunci simetris digunakan pada saat melakukan enkripsi pada berkas tersebut. Kunci dari berkas tersebut lalu dapat dienkripsi menggunakan algoritma kunci publik sesuai dengan partisipan yang dapat membaca berkas tersebut. 
+
+Permasalahan dari implementasi tersebut adalah setiap partisipan yang dapat membaca berkas tersebut dapat melakukan pengubahan. Untuk mencegah hal tersebut, dapat digunakan mekanisme \emph{digital signature}. Tanda tangan digital untuk integritas berkas dibuat setiap kali proses enkripsi dilakukan pertama kali. Tanda tangan digital ini untuk memberikan informasi terkait dengan integritas berkas tersebut. Bila terdapat perubahan pada berkas tersebut, proses dekripsi dapat langsung dibatalkan.
+
+Informasi kunci privat dari tanda tangan berkas tersebut dapat disimpan sebagai hak akses timpa untuk berkas tersebut. Setiap kali proses timpa dilakukan, tanda tangan digital ini harus diperbaharui kembali. Hal ini agar partisipan tetap dapat membaca berkas tersebut.
+
+Informasi terkait dengan kunci publik berkas, kunci dekripsi berkas, kunci tanda tangan berkas perlu ditandatangani oleh pembuat berkas. Hal ini menyatakan integritas dari hak akses yang diberikan oleh pembuat berkas. Informasi tersebut disebut dengan \emph{header file}. Informasi pada \emph{header file} dan pesan terenkripsi juga perlu dilakukan proses penandatanganan digital menggunakan kunci privat dari berkas. Secara garis besar, rancangan proses enkripsi menggunakan skema ini ditunjukan pada gambar \ref{fig:enkripsi}.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.5\textwidth]{res/scheme.png}}
+    \caption{Rancangan Proses Enkripsi Berkas}
+    \label{fig:enkripsi}
+\end{figure}
+
+Bila dilihat pada gambar \ref{fig:enkripsi}, kunci publik pengguna yang akan diberi akses dapat lebih dari satu. Proses enkripsi ECIES dilakukan untuk tiap-tiap kunci publik yang diberikan. Oleh karena itu, proses enkripsi berkas ini disebut dengan \emph{multiparticipant party}.
+
+\subsection{Struktur Data Berkas}
+
+Berkas yang terenkripsi perlu didefinisikan terkait dengan struktur data yang digunakan. Hal ini untuk memberikan informasi terkait dengan berkas berkas tersebut. Seperti yang telah dijelaskan pada bagian \ref{sec:hak-akses}, terdapat dua bagian utama pada berkas, yaitu \emph{header file} dan pesan terenkripsi. Informasi yang terdapat pada berkas mencakup informasi berikut:
+
+\begin{enumerate}
+    \item \emph{Decryption Key Dictionary} \\
+    Informasi pada bagian ini menjelaskan terkait dengan kunci dekripsi yang digunakan untuk membaca berkas tersebut. Struktur data yang digunakan adalah \emph{dictionary} yang berisi pasangan hash dari kunci publik pengguna dan kunci dekripsi yang telah dilakukan enkripsi dengan kunci publik tersebut. Hash yang digunakan adalah SHA-256.
+    \item \emph{Signing Key Dictionary} \\
+    Informasi pada bagian ini menjelaskan terkait dengan kunci tanda tangan digital yang digunakan untuk menandatangani berkas tersebut. Struktur data yang digunakan adalah \emph{dictionary} yang berisi pasangan hash dari kunci publik pengguna dan kunci tanda tangan digital yang telah dilakukan enkripsi dengan kunci publik tersebut. Hash yang digunakan adalah SHA-256. Tanda tangan digital ini digunakan untuk menimpa pesan terenkripsi pada berkas tersebut. 
+    \item \emph{File Public Key}\\
+    Kunci publik ini merupakan kunci publi dari tanda tangan digital file. Kunci ini digunakan untuk memverifikasi integritas \emph{header} dan pesan terenkripsi.
+    \item Tanda Tangan Pemilik\\
+    Tanda tangan digital pemilik berkas ini mencakup poin-poin di atas. Tanda tangan ini digunakan untuk memverifikasi integritas dari \emph{header} file. Pengujian terhadap tanda tangan ini diperlukan untuk memastikan bahwa hak akses yang diberikan oleh pemilik berkas memang valid.
+    \item Pesan Terenkripsi\\
+    Pesan terenkripsi ini merupakan pesan yang telah dienkripsi menggunakan algoritma kunci simetris. Pesan ini juga telah diotentikasi menggunakan mode blok GCM.
+    \item Tanda Tangan File\\
+    Tanda tangan ini mencakup lima poin yang ada pada bagian di atas. Tanda tangan ini digunakan untuk memverifikasi integritas dari berkas tersebut.
+\end{enumerate}
+
+Struktur data ini bila diilustrasikan dalam bentuk diagram akan terlihat seperti pada gambar \ref{fig:struktur}. Pada diagram tersebut terdapat tiga buah \emph{nonce} yang berbeda. Fungsi dari \emph{nonce} ini adalah untuk menghindari adanya serangan \emph{dictionary attack} pada struktur data \emph{decryption key dictionary} dan \emph{signing key dictionary}. Ancaman ini dapat terjadi dikarenakan kunci publik yang digunakan oleh pengguna dapat diketahui oleh pihak lain dengan mudah. Oleh karena itu, \emph{nonce} ini digunakan untuk mengacak nilai kunci dekripsi dan kunci tanda tangan digital yang digunakan. Akibat dari proses ini, serangan \emph{dictionary attack} tidak akan mangkus untuk dilaksanakan.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.5\textwidth]{res/struktur.png}}
+    \caption{Struktur Data Berkas Terenkripsi}
+    \label{fig:struktur}
+\end{figure}
+
+\section{implementasi}
+
+Implementasi dari rancangan sistem ini memanfaatkan bahasa pemrograman Go. Pemilihan dari bahasa pemrograman ini dikarenakan Go memiliki dukungan yang cukup baik terhadap kriptografi. Implementasi dari rancangan sistem ini akan dibagi menjadi beberapa bagian, yaitu:
+
+\begin{enumerate}
+    \item Implementasi dari algoritma ECIES.
+    \item Implementasi dari tanda tangan digital ECDSA.
+    \item Serialisasi Struktur Data.
+\end{enumerate}
+
+\subsection{Implementasi Algoritma ECIES}
+
+Algoritma ECIES diimplementasikan dengan memanfaatkan pustaka ECDH. Pemilihan dari pustaka ini dikarenakan pustaka ini memiliki karakteristik yang mirip dengan ECIES. Pustaka ini juga memiliki dukungan yang cukup baik pada berbagai bahasa. Kunci privat dari parameter ECDH disimpan dalam format PKCS\#8. Kunci publik dari parameter ECDH disimpan dalam format PKIX.
+
+Pada implementasi yang dilakukan, terdapat beberapa parameter yang diatur. Parameter tersebut adalah sebagai berikut:
+
+\begin{enumerate}
+    \item Kurva Eliptik\\
+    Jenis kurva eliptik yang digunakan pada operasi ECIES adalah kurva eliptik P-256. Kurva eliptik ini dipilih dikarenakan kurva eliptik ini memiliki panjang kunci yang pendek serta memiliki kualitas yang cukup baik.
+    \item \emph{Seed} dari PBKDF2\\
+    Seed yang digunakan pada PBKDF2 adalah nilai acak yang dihasilkan dari sistem operasi. Seed ini digunakan untuk memperkuat kunci yang dihasilkan dari PBKDF2. Seed ini pada akhirnya akan disimpan berdampingan dengan berkas yang dienkripsi.
+    \item Paremeter \#2 pada ECIES\\
+    Parameter ini digunakan sebagai otentikasi dari tanda tangan pemilik pesan. Parameter ini akan memastikan bahwa tanda tangan pemilik belum berubah sejak terakhir kali berkas tersebut dienkripsi. Bila telah berubah, proses dekripsi akan gagal.
+\end{enumerate}
+
+\subsection{Implementasi Tanda Tangan Digital ECDSA}
+
+Tanda tangan digital ECDSA diimplementasikan dengan memanfaatkan pustaka ECDSA. Pemilihan dari pustaka ini dikarenakan pustaka ini memiliki dukungan yang cukup baik pada berbagai bahasa. Kunci privat dari parameter ECDSA disimpan dalam format PKCS\#8. Kunci publik dari parameter ECDSA disimpan dalam format PKIX. Jenis kurva eliptik yang digunakan pada operasi ECDSA adalah kurva eliptik P-256. Kurva eliptik ini dipilih dikarenakan kurva eliptik ini memiliki panjang kunci yang pendek serta memiliki kualitas yang cukup baik.
+
+\subsection{Serialisasi Stuktur Data}
+
+Struktur data berkas diimplementasikan dengan melakukan konkatenasi dari larik byte yang ada. Struktur data saat menyatukan larik byte tersebut ditunjukan pada figur \ref{fig:bytes.array}.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.5\textwidth]{res/bytes.array.png}}
+    \caption{Struktur Data Berkas Terenkripsi}
+    \label{fig:bytes.array}
+\end{figure}
+
+Pada gambar tersebut, ditunjukan bahwa larik akan diawali dengan jumlah elemen dari larik tersebut. Hal ini dilakukan untuk mempermudah proses deserialisasi dari struktur data tersebut. Besar dari tiap elemen byte juga akan disertakan pada larik tersebut. Hal ini dilakukan untuk menghemat ukuran dari struktur data tersebut.
+
+\section{Pengujian}
+
+Pengujian dari rancangan sistem ini dilakukan dengan memanfaatkan beberapa skenario. Ketentuan yang perlu dipenuhi pada saat pengujian adalah sebagai berikut:
+\begin{enumerate}
+    \item Program dapat mengenkripsi berkas dengan benar.
+    \item Program dapat mendekripsi berkas dengan benar.
+    \item Program dapat menolak melakukan dekripsi pada pengguna yang tidak memiliki hak akses.
+    \item Program dapat menolak melakukan operasi timpa pada pengguna yang tidak memiliki hak akses.
+    \item Program dapat melakukan operasi timpa.
+    \item Program dapat melakukan dekripsi pesan pada file yang telah ditimpa.
+\end{enumerate}
+
+Dari hasil pengujian menunjukan bahwa keenam dari skenario tersebut terpenuhi. Hal ini dapat menyimpulkan bahwa teknik ini dapat digunakan untuk mengamankan berkas yang ada.
+
 
 \begin{thebibliography}{00}
-    \bibitem{b1} Munir, Rinaldi. 2019. Kriptografi. Bandung: Informatika.
-    \bibitem{b2} Ali, S., \& Abdul, A. (2016). Data Security for cloud computing based on Elliptic Curve Integrated Encryption Scheme (ECIES) and modified identity based cryptography (MIBC). International Journal of Applied Information Systems, 10(6), 7-13. https://doi.org/10.5120/ijais2016451517.
-    \bibitem{b3} Abdalla, M., Bellare, M., \& Rogaway, P. (2021). DHIES: An Encryption Scheme Based on the Diffie-Hellman Problem.
-    \bibitem{b4} Rogaway, Phillip. 2002. Authenticated-encryption with Associated-data. In Proceedings of the 9th ACM conference on Computer and communications security (CCS'02). Association for Computing Machinery, New York, NY, USA, 98-107. https://doi.org/10.1145/586110.586125.
-    \bibitem{b6} McGrew, D.A., \& Viega, J. (2005). The Galois/Counter Mode of Operation (GCM). https://csrc.nist.rip/groups/ST/toolkit/BCM/documents/proposedmodes/gcm/gcm-spec.pdf.
-    \bibitem{b7} Martinez, V. G., Encinas, L. H., \& Ávila, C. S. (2010). A Survey of the Elliptic Curve Integrated Encryption Scheme. Journal of Computer Science and Engineering, 2(2), 7-13. 
+    \bibitem{munir2019} Munir, Rinaldi. 2019. Kriptografi. Bandung: Informatika.
+    \bibitem{ali2016} Ali, S., \& Abdul, A. (2016). Data Security for cloud computing based on Elliptic Curve Integrated Encryption Scheme (ECIES) and modified identity based cryptography (MIBC). International Journal of Applied Information Systems, 10(6), 7-13. https://doi.org/10.5120/ijais2016451517.
+    \bibitem{abdalla2021} Abdalla, M., Bellare, M., \& Rogaway, P. (2021). DHIES: An Encryption Scheme Based on the Diffie-Hellman Problem.
+    \bibitem{rogaway2002} Rogaway, Phillip. 2002. Authenticated-encryption with Associated-data. In Proceedings of the 9th ACM conference on Computer and communications security (CCS'02). Association for Computing Machinery, New York, NY, USA, 98-107. https://doi.org/10.1145/586110.586125.
+    \bibitem{mcgrew2005} McGrew, D.A., \& Viega, J. (2005). The Galois/Counter Mode of Operation (GCM). https://csrc.nist.rip/groups/ST/toolkit/BCM/documents/proposedmodes/gcm/gcm-spec.pdf.
+    \bibitem{martinez2010} Martinez, V. G., Encinas, L. H., \& Ávila, C. S. (2010). A Survey of the Elliptic Curve Integrated Encryption Scheme. Journal of Computer Science and Engineering, 2(2), 7-13. 
+    \bibitem{pkcs5} Kaliski, B. (2000). PKCS \#5: Password-Based Cryptography Specification Version 2.0. https://doi.org/10.17487/rfc2898.
+    \bibitem{raeburn2005} Raeburn, K. (2005). Advanced Encryption Standard (AES) Encryption for Kerberos 5. https://doi.org/10.17487/rfc3962.
 \end{thebibliography}
 
 \end{document}
@@ -293,7 +423,7 @@ Berdasarkan bagian \ref{sec:aead}, mode blok berbasis GCM mendukung penggunaan \
 
 % {\LaTeX} can't read your mind. If you assign the same label to a
 % subsubsection and a table, you might find that Table I has been cross
-% referenced as Table IV-B3. 
+% referenced as Table IV-abdalla2021. 
 
 % {\LaTeX} does not have precognitive abilities. If you put a
 % \verb|\label| command before the command that updates the counter it's
@@ -320,7 +450,7 @@ Berdasarkan bagian \ref{sec:aead}, mode blok berbasis GCM mendukung penggunaan \
 % \item There is no period after the ``et'' in the Latin abbreviation ``et al.''.
 % \item The abbreviation ``i.e.'' means ``that is'', and the abbreviation ``e.g.'' means ``for example''.
 % \end{itemize}
-% An excellent style manual for science writers is \cite{b7}.
+% An excellent style manual for science writers is \cite{martinez2010}.
 
 % \subsection{Authors and Affiliations}
 % \textbf{The class file is designed for, but not limited to, six authors.} A 
@@ -371,7 +501,7 @@ Berdasarkan bagian \ref{sec:aead}, mode blok berbasis GCM mendukung penggunaan \
 % \hline
 % \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
 % \end{tabular}
-% \label{tab1}
+% \label{tamunir2019}
 % \end{center}
 % \end{table}
 
@@ -400,10 +530,10 @@ Berdasarkan bagian \ref{sec:aead}, mode blok berbasis GCM mendukung penggunaan \
 
 % \section*{References}
 
-% Please number citations consecutively within brackets \cite{b1}. The 
-% sentence punctuation follows the bracket \cite{b2}. Refer simply to the reference 
-% number, as in \cite{b3}---do not use ``Ref. \cite{b3}'' or ``reference \cite{b3}'' except at 
-% the beginning of a sentence: ``Reference \cite{b3} was the first $\ldots$''
+% Please number citations consecutively within brackets \cite{munir2019}. The 
+% sentence punctuation follows the bracket \cite{ali2016}. Refer simply to the reference 
+% number, as in \cite{abdalla2021}---do not use ``Ref. \cite{abdalla2021}'' or ``reference \cite{abdalla2021}'' except at 
+% the beginning of a sentence: ``Reference \cite{abdalla2021} was the first $\ldots$''
 
 % Number footnotes separately in superscripts. Place the actual footnote at 
 % the bottom of the column in which it was cited. Do not put footnotes in the 
@@ -411,11 +541,11 @@ Berdasarkan bagian \ref{sec:aead}, mode blok berbasis GCM mendukung penggunaan \
 
 % Unless there are six authors or more give all authors' names; do not use 
 % ``et al.''. Papers that have not been published, even if they have been 
-% submitted for publication, should be cited as ``unpublished'' \cite{b4}. Papers 
+% submitted for publication, should be cited as ``unpublished'' \cite{rogaway2002}. Papers 
 % that have been accepted for publication should be cited as ``in press'' \cite{b5}. 
 % Capitalize only the first word in a paper title, except for proper nouns and 
 % element symbols.
 
 % For papers published in translation journals, please give the English 
-% citation first, followed by the original foreign-language citation \cite{b6}.
+% citation first, followed by the original foreign-language citation \cite{mcgrew2005}.
 
